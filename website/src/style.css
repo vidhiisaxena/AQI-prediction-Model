@@ -9,14 +9,14 @@
 video {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit:fill;
 }
 .map{
     display: block;
     margin-left: auto;
     margin-right:auto;
-    width: 50%;
-    height: 60%;
+    width: 30%;
+    height: 40%;
 }
 .rectangle{
  height: 25px;	
