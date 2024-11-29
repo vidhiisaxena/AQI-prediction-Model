@@ -18,3 +18,12 @@ video {
     width: 50%;
     height: 60%;
 }
+.rectangle{
+ height: 25px;	
+ overflow: hidden;
+ position: relative;
+ background: rgb(7, 7, 6);
+ color: rgb(236, 234, 230);
+ border: 1px solid rgb(110, 107, 103);
+}
+
