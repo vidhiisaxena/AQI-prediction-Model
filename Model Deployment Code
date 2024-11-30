@@ -1,0 +1,78 @@
+import numpy as np
+import pickle
+import streamlit as st
+from datetime import datetime
+
+# Set up the page
+st.set_page_config(page_title='AQI Predictor', layout='centered')
+
+# Load the ML model
+filename = 'model.pkl'
+model = pickle.load(open(filename, 'rb'))
+
+# Page Title
+st.markdown("<h1 style='text-align: center; color: white;'>AQI Predictor</h1>", unsafe_allow_html=True)
+
+# Add background image
+st.markdown(
+    """
+    <style>
+    .stApp {
+        background-image: url("https://th.bing.com/th/id/OIP.D3CC68WnsI5dqxRnfmwEAwHaEh?rs=1&pid=ImgDetMain");
+        background-attachment: fixed;
+        background-size: cover;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+# Add description
+with st.expander("Description"):
+    st.info(
+        """
+        AQI Predictor is an innovative web platform designed to monitor, predict, and analyze air quality in your area.
+        With real-time data visualization and advanced machine learning models, it empowers users to stay informed about
+        air pollution levels and make proactive decisions for a healthier lifestyle.
+        """
+    )
+
+# City selection
+city_list = ['Ahmedabad', 'Aizawl', 'Amaravati','Delhi']
+city_encoding = {
+    'Ahmedabad': [1, 0, 0],
+    'Aizawl': [0, 1, 0],
+    'Amaravati': [0, 0, 1]
+}
+
+# Select city from the dropdown
+city = st.selectbox('Select your city', city_list)
+city_vector = city_encoding[city]
+
+# Input date
+selected_date = st.date_input(
+    "Select a date",
+    value=datetime.today(),
+    min_value=datetime(2000, 1, 1),
+    max_value=datetime(2100, 12, 31)
+)
+
+# Parse date into year, month, and day
+year, month, day = selected_date.year, selected_date.month, selected_date.day
+
+# Environmental features input
+st.markdown("### Enter Environmental Features:")
+co = st.number_input("CO (Carbon Monoxide)", min_value=0.0, step=0.1)
+pm10 = st.number_input("PM10", min_value=0.0, step=0.1)
+
+# Combine features into input data
+input_data = np.array(city_vector + [year, month, day, co, pm10]).reshape(1, -1)
+
+# Prediction button
+if st.button('Predict AQI'):
+    try:
+        # Predict AQI using the model
+        predicted_aqi = model.predict(input_data)
+        st.success(f"The predicted AQI for {city} on {selected_date.strftime('%d-%m-%Y')} is: {int(predicted_aqi[0])}")
+    except Exception as e:
+        st.error(f"Error in prediction: {e}")
